@@ -1,17 +1,16 @@
 <?php
-require '../vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 use Aws\S3\S3Client;
-
 
 function index($data)
 {
-	$bucket = ''
+	$bucket = '';
 	$s3 = new Aws\S3\S3Client([
     	'credentials' => [
-        'key' => 'your access key',
-        'secret' => 'your access secret',
+        'key' => '',
+        'secret' => '',
     	],
-    	'region' => 'ap-northeast-1',
+    	'region' => 'us-east-1',
    	 'version' => 'latest',
 	]);
  	
