@@ -1,9 +1,26 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
 use Aws\S3\S3Client;
 
 function index($data)
 {
+	$dir = __DIR__;
+
+	//$cmd = "${dir}/bin/puzzle-diff ${dir}/pic/test.png ${dir}/pic/test2.png";
+	//exec($cmd, $opt);
+	//print_r($opt);
+	
+	$cmd = "${dir}/bin/dwebp ${dir}/pic/test.webp -o /tmp/test_webp.jpg";
+	exec($cmd, $opt);
+	print_r($opt);
+	
+	$cmd = 'ls -la /tmp';
+	exec($cmd, $opt);
+	print_r($opt);
+	
+	//$cmd = "${dir}/python/python3.6 -B ${dir}/python/test.py";
+	//exec($cmd, $opt);
+//	print_r($opt);
+	/*
 	$bucket = '';
 	$s3 = new Aws\S3\S3Client([
     	'credentials' => [
@@ -27,7 +44,7 @@ function index($data)
 	} catch (S3Exception $e) {
     		echo $e->getMessage() . PHP_EOL;
 	}	
-
+        */
 	echo "uploaded object key: {$data['Records'][0]['s3']['object']['key']}";
 	return "uploaded object key: {$data['Records'][0]['s3']['object']['key']}";
 }

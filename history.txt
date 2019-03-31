@@ -52,3 +52,990 @@ https://aws.amazon.com/jp/blogs/apn/aws-lambda-custom-runtime-for-php-a-practica
    49  aws lambda create-function     --function-name php-example-hello12     --handler hello     --zip-file fileb://./hello.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:2"
    50  ll
    51  history > history.txt
+    1  php -v
+    2  python -v
+    3  sudo yum -y update
+    4  sudo yum install autoconf bison gcc gcc-c++ libcurl-devel libxml2-devel -y
+    5  curl -sL http://www.openssl.org/source/openssl-1.0.1k.tar.gz | tar -xvz
+    6  cd openssl-1.0.1k/
+    7  ./config && make && sudo make install
+    8  mkdir ~/php-7-bin
+    9  curl -sL https://github.com/php/php-src/archive/php-7.3.0.tar.gz | tar -xvz
+   10  cd php-src-php-7.3.0/
+   11  ./buildconf --force
+   12  ./configure --prefix=/home/ec2-user/php-7-bin/ --with-openssl=/usr/local/ssl --with-curl --with-zlib
+   13  make install
+   14  cd
+   15  mkdir -p ~/php-example/{bin,src}/
+   16  cd php-example/
+   17  touch ./src/{hello,goodbye}.php
+   18  touch ./bootstrap && chmod +x ./bootstrap
+   19  cp ~/php-7-bin/bin/php ./bin
+   20  ll
+   21  .bin/php -v
+   22  ./bin/php -v
+   23  curl -sS https://getcomposer.org/installer | ./bin/php
+   24  ./bin/php composer.phar require guzzlehttp/guzzle
+   25  ll
+   26  vi bootstrap 
+   27  vi src/hello.php
+   28  vi src/goodbye.php
+   29  zip -r runtime.zip bin bootstrap
+   30  zip -r vendor.zip vendor/
+   31  ll
+   32  zip hello.zip src/hello.php
+   33  zip goodbye.zip src/goodbye.php
+   34  sudo pip install --upgrade awscli
+   35  sudo yum -y install python3
+   36  aws lambda publish-layer-version     --layer-name php-example-runtime     --zip-file fileb://runtime.zip     --region us-east-1
+   37  aws configure
+   38  aws lambda publish-layer-version     --layer-name php-example-runtime     --zip-file fileb://runtime.zip     --region us-east-1
+   39  aws lambda publish-layer-version     --layer-name php-example-vendor     --zip-file fileb://vendor.zip     --region us-east-1
+   40  aws lambda create-function     --function-name php-example-hello11     --handler hello     --zip-file fileb://./hello.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:2"
+   41  aws lambda invoke     --function-name php-example-hello11     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+   42  ll
+   43  cat hello-output.txt 
+   44  ll
+   45  vi src/hello.php 
+   46  rm hello.zip 
+   47  zip hello.zip src/hello.php
+   48  aws lambda create-function     --function-name php-example-hello11     --handler hello     --zip-file fileb://./hello.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:2"
+   49  aws lambda create-function     --function-name php-example-hello12     --handler hello     --zip-file fileb://./hello.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:2"
+   50  ll
+   51  history > history.txt
+   52  less history.txt 
+   53  vi history.txt 
+   54  uname -a
+   55  python --version
+   56  which python
+   57  which python3
+   58  which pythonll
+   59  ll
+   60  echo "# aws_custom_runtime_php" >> README.md
+   61  git inti
+   62  sudo yum -y install git
+   63  git init
+   64  git add .
+   65  git commit -m"first commit"
+   66  git config --global user.email "oretanegi@gmail.com"
+   67  git config --global user.name "takahiro tsukahara"
+   68  git commit -m"first commit"
+   69  git remote add origin https://github.com/oretanegi/aws_custom_runtime_php.git
+   70  git push -u origin master
+   71  ll
+   72  cd php-example/
+   73  ll
+   74  vi bootstrap 
+   75  ./bin/php -m
+   76  vi bootstrap 
+   77  ll
+   78  vi src/hello.php 
+   79  cd ../
+   80  cp -r php-example/ php-example2/
+   81  cd php-example2/
+   82  ll
+   83  vi bootstrap 
+   84  cd ../
+   85  cd php-example
+   86  ll
+   87  cp src/hello.php src/index.php
+   88  vi src/index.php 
+   89  ll vendor
+   90  ./bin/php composer.phar require aws/aws-sdk-php
+   91  ll vendor
+   92  ll
+   93  vi src/index.php 
+   94  git status
+   95  git add .
+   96  git commit -m"add aws sdk"
+   97  git push
+   98  ll
+   99  vi src/index.php 
+  100  rm vendor.zip 
+  101  zip -r vendor.zip vendor/
+  102  zip index.zip src/index.php
+  103  ll
+  104  aws lambda publish-layer-version     --layer-name php-example-vendor     --zip-file fileb://vendor.zip     --region us-east-1
+  105  aws lambda create-function     --function-name php-example-index     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  106  aws lambda invoke     --function-name php-example-index     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  107  vi src/index.php 
+  108  rm index.zip 
+  109  zip index.zip src/index.php
+  110  aws lambda create-function     --function-name php-example-index2     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  111  aws lambda invoke     --function-name php-example-index2     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  112  ll
+  113  ll vendor
+  114  ll
+  115  vi bootstrap 
+  116  cd src/
+  117  ll
+  118  rm goodbye.php 
+  119  rm hello.php 
+  120  cp ../composer.phar .
+  121  ../bin/php ../composer.phar require aws/aws-sdk-php
+  122  ll
+  123  vi index.php 
+  124  vi ../bootstrap 
+  125  vi index.php 
+  126  cd ../
+  127  ll
+  128  rm index.zip 
+  129  zip -r index.zip src/
+  130  ll
+  131  vi bootstrap 
+  132  aws lambda create-function     --function-name php-example-index3     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  133  aws lambda invoke     --function-name php-example-index3     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  134  ll
+  135  vi src/index.php 
+  136  history
+  137  ll
+  138  ll src/
+  139  vi src/index.php 
+  140  git status
+  141  cat hello-output.txt 
+  142  git add .
+  143  git commit -m"add vender dir"
+  144  git push
+  145  ll
+  146  ll src/
+  147  ll
+  148  cd ../
+  149  ll
+  150  mkdir python-3-bin
+  151  curl -O https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tar.xz
+  152  ll
+  153  tar xzvf Python-3.7.3.tar.xz 
+  154  ll
+  155  tar Jxf Python-3.7.3.tar.xz 
+  156  ll
+  157  cd Python-3.7.3
+  158  ll
+  159  ll ../
+  160  ./configre --prefix=/home/ec2-user/python-3-bin/ --with-ensurepip
+  161  ./configure --prefix=/home/ec2-user/python-3-bin/ --with-ensurepip
+  162  make
+  163  sudo yum -y install zlib-devel openssl-devel tk-devel
+  164  make
+  165  which openssl
+  166  ./configure --prefix=/home/ec2-user/python-3-bin/ --with-ensurepip --with-openssl=/usr/bin/openssl
+  167  make
+  168  ./configure --prefix=/home/ec2-user/python-3-bin/ --with-ensurepip --with-openssl=/usr/bin
+  169  ./configure --prefix=/home/ec2-user/python-3-bin/ --with-ensurepip --with-openssl=/usr/bin --enable-optimizations
+  170  make
+  171  cd ../
+  172  ll
+  173  history|grep wget
+  174  history|grep curl
+  175  curl -O https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tar.xz
+  176  ll
+  177  tar Jxf Python-3.6.8.tar.xz 
+  178  ll
+  179  cd Python-3.6.8
+  180  history|grep configure
+  181  ./configure --prefix=/home/ec2-user/python-3-bin/ --with-ensurepip --with-openssl=/usr/bin --enable-optimizations
+  182  ./configure --prefix=/home/ec2-user/python-3-bin/ --with-ensurepip  --enable-optimizations
+  183  make
+  184  make install
+  185  cd ../
+  186  ll
+  187  cd python-3-bin/
+  188  ll
+  189  ll bin/
+  190  cd ../
+  191  ll
+  192  cd php-example
+  193  ll
+  194  cd src/
+  195  ll
+  196  mkdir python
+  197  cd python/
+  198  ll
+  199  cp /home/ec2-user/python-3-bin/bin/python3.6 .
+  200  cp /home/ec2-user/python-3-bin/bin/pip3 .
+  201  ll
+  202  ./python3.6 --version
+  203  ./pip3 version
+  204  ./pip3 --version
+  205  vi test.py
+  206  ./python3.6 test.py 
+  207  ./pip3 install opencv-python -t .
+  208  ll
+  209  vi test.py 
+  210  ./python3.6 test.py 
+  211  vi test.py 
+  212  ./python3.6 test.py 
+  213  ll
+  214  mkdir pic
+  215  cd pic
+  216  which wget
+  217  wget https://d2908q01vomqb2.cloudfront.net/77de68daecd823babbb58edb1c8e14d7106e83bb/2018/12/15/Rackspace-PHP-1-300x137.png
+  218  ll
+  219  mv Rackspace-PHP-1-300x137.png test.png
+  220  ll
+  221  cp test.png test2.png 
+  222  cd ../
+  223  ll
+  224  ./pip3 install ImageHash -t .
+  225  ll
+  226  ./pip3 install pypuzzle -t .
+  227  sudo yum -y install gd gd-devel gcc gcc-c++ make php-devel which wget
+  228  cd
+  229  ll
+  230  wget https://download.pureftpd.org/pub/pure-ftpd/misc/libpuzzle/releases/libpuzzle-0.11.tar.gz
+  231  ll
+  232  tar xzvf libpuzzle-0.11.tar.gz 
+  233  cd libpuzzle-0.11
+  234  ./configure --with-libpuzzle
+  235  ./configure
+  236  make
+  237  make install
+  238  sudo make install
+  239  cd ../
+  240  ll
+  241  cd php-example
+  242  ll
+  243  cd src/
+  244  cd python/
+  245  ll
+  246  ./pip3 install pypuzzle -t .
+  247  ll
+  248  vi test.py 
+  249  ./python3.6 ./test.py 
+  250  ll /usr/local/lib
+  251  cp /usr/local/lib/libpuzzle.so.1.0.0 
+  252  cp /usr/local/lib/libpuzzle.so.1.0.0 .
+  253  ll
+  254  ln -s libpuzzle.so.1.0.0 libpuzzle.so.1
+  255  ll
+  256  ./python3.6 ./test.py 
+  257  ll
+  258  ll bin/
+  259  cp libpuzzle.so.1.0.0 bin/
+  260  ll bin/
+  261  ./python3.6 ./test.py 
+  262  mv bin/libpuzzle.so.1.0.0 bin/libpuzzle.so.1
+  263  ll bin/
+  264  ./python3.6 ./test.py 
+  265  rm libpuzzle.so.1
+  266  ll
+  267  rm libpuzzle.so.1.0.0 
+  268  rm bin/libpuzzle.so.1 
+  269  ./pip3 freeze
+  270  pip3 uninstall pypuzzle==1.3
+  271  ./pip3 uninstall pypuzzle==1.3
+  272  ll
+  273  cat six.py 
+  274  ll
+  275  wget https://github.com/ArchangelSDY/PyPuzzle.git
+  276  ll
+  277  rm PyPuzzle.git 
+  278  wget https://github.com/ArchangelSDY/PyPuzzle/archive/master.zip
+  279  ll
+  280  unzip master.zip 
+  281  ll
+  282  cd PyPuzzle-master/
+  283  ll
+  284  cd ../
+  285  ll
+  286  rm -rf php-example2/
+  287  cp -r php-example/ php-example2/
+  288  cd php-example
+  289  cd src/
+  290  cd python/
+  291  ll
+  292  cd PyPuzzle-master/
+  293  ll
+  294  less setup.py
+  295  ../python3.6 setup.py install
+  296  cd ../
+  297  ll
+  298  cd ../
+  299  ll
+  300  cd ../
+  301  ll
+  302  cd python-3-bin/
+  303  ll
+  304  ll share/
+  305  ll lib/
+  306  ll lib/python3.6/
+  307  ll
+  308  ll bin/
+  309  ll
+  310  ll include/
+  311  ll include/python3.6m/
+  312  ll
+  313  ll lib/
+  314  ll /home/ec2-user/python-3-bin/lib/python3.6/
+  315  ll /home/ec2-user/python-3-bin/lib/python3.6/site-packages/
+  316  ll
+  317  cp ../php-example/src/python/test.py .
+  318  ll
+  319  vi test.py 
+  320  ll bin/
+  321  ./bin/python3 test.py 
+  322  which libpuzzle
+  323  ll
+  324  cd ../
+  325  ll
+  326  ll php-7-bin/
+  327  ll php-7-bin/bin/
+  328  ./php-7-bin/bin/php -i
+  329  ./php-7-bin/bin/php -i|grep "php.ini"
+  330  ll
+  331  cd libpuzzle-0.11
+  332  ll
+  333  less INSTALL 
+  334  ll /usr/local/
+  335  ll /usr/local/bin/
+  336  ll
+  337  vi Makefile
+  338  vi configure
+  339  sudo make install
+  340  which puzzule-diff
+  341  ll /usr/local/bin/
+  342  ll /usr/local/bin/|grep diff
+  343  /usr/local/bin/puzzle-diff
+  344  cd
+  345  cd php-example
+  346  ll
+  347  cd src/
+  348  ll
+  349  cd python/
+  350  ll
+  351  cp /usr/local/bin/puzzle-diff .
+  352  ll
+  353  ./puzzle-diff 
+  354  ll
+  355  ./puzzle-diff ./pic/test.png ./pic/test2.png 
+  356  cd ../
+  357  ll
+  358  cp -r python/pic/ .
+  359  ll
+  360  mkdir bin
+  361  cp python/puzzle-diff ./bin/
+  362  ll bin/
+  363  ll
+  364  vi index.php 
+  365  history
+  366  vi index.php 
+  367  ./bin//puzzle-diff ./pic/test.png ./pic/test2.png
+  368  vi index.php 
+  369  vi python/test.py 
+  370  cd python/
+  371  ll
+  372  vi test.py 
+  373  ./python3.6 test.py 
+  374  vi test.py 
+  375  ./python3.6 test.py 
+  376  vi test.py 
+  377  ./python3.6 test.py 
+  378  vi test.py 
+  379  ./python3.6 test.py 
+  380  vi test.py 
+  381  ./python3.6 test.py 
+  382  vi test.py 
+  383  ./python3.6 test.py 
+  384  pip3 install webp -t .
+  385  ./pip3 install webp -t .
+  386  ll
+  387  ./pip3 install --upgrade pip
+  388  pip3 install webp -t .
+  389  ./pip3 install webp -t .
+  390  ./pip3 install --upgrade pip setuptools
+  391  ./pip3 install webp -t .
+  392  cd ../
+  393  ll
+  394  cd bin/
+  395  wget https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.0.2.tar.gz
+  396  ll
+  397  tar xzvf libwebp-1.0.2.tar.gz 
+  398  ll
+  399  cd libwebp-1.0.2
+  400  ll
+  401  cd ../
+  402  rm -rf libwebp-1.0.2
+  403  ll
+  404  rm libwebp-1.0.2.tar.gz 
+  405  wget libwebp-1.0.2-linux-x86-64.tar.gz
+  406  wget https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.0.2-linux-x86-64.tar.gz
+  407  ll
+  408  tar xzvf libwebp-1.0.2-linux-x86-64.tar.gz 
+  409  ll
+  410  cd libwebp-1.0.2-linux-x86-64
+  411  ll
+  412  ll bin/
+  413  cd ../
+  414  ll
+  415  mv libwebp-1.0.2-linux-x86-64 libwebp/
+  416  ll
+  417  cd ../
+  418  ll
+  419  cd pic/
+  420  wget https://www.gstatic.com/webp/gallery/4.sm.webp
+  421  ll
+  422  mv 4.sm.webp test.webp 
+  423  ll
+  424  cd ../
+  425  ./bin/libwebp/bin/dwebp ./pic/test.webp -o ./pic/test_webp.jpg
+  426  ./bin/libwebp/bin/cwebp ./pic/test.webp -o ./pic/test_webp.jpg
+  427  sudo yum -y instal webp
+  428  sudo yum -y install webp
+  429  cd
+  430  ll
+  431  history|grep webp
+  432  wget https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.0.2.tar.gz
+  433  ll
+  434  tar xzvf libwebp-1.0.2.tar.gz 
+  435  cd libwebp-1.0.2
+  436  ll
+  437  ./configure --option
+  438  ./configure --help
+  439  ./configure --help|grep disable
+  440  ./configure --help|grep enable
+  441  cd ../
+  442  ll
+  443  mkdir libwebp-bin
+  444  cd libwebp-1.0.2
+  445  ./configre --help
+  446  ./configure --help
+  447  ./configure --help|grep prefix
+  448  ./configure --help|grep enable
+  449  ./configure --prefix=/home/ec2-user/libwebp-bin/ --enable-shared=no --enable-static
+  450  make
+  451  make test
+  452  make install
+  453  cd ../
+  454  ll
+  455  cd libwebp-bin/
+  456  ll
+  457  ldd bin/cwebp 
+  458  cd ../
+  459  cd php-example
+  460  ll
+  461  cd bin/
+  462  ll
+  463  cd sr
+  464  cd ../
+  465  ll
+  466  cd src/
+  467  ll
+  468  cd bin/
+  469  ll
+  470  rm -rf libwebp
+  471  rm libwebp-1.0.2-linux-x86-64.tar.gz 
+  472  cp /home/ec2-user/libwebp-bin/bin/cwebp .
+  473  history|grep webp
+  474  cp /home/ec2-user/libwebp-bin/bin/dwebp .
+  475  ll
+  476  cd ../
+  477  ls
+  478  ll pic/
+  479  ./bin/dwebp ./pic/test.webp -o ./pic/test_webp.jpg
+  480  ll pic/
+  481  ./bin/dwebp ./pic/test.webp -o ./pic/test_webp.jpg
+  482  ll pic/
+  483  rm pic/test_webp.jpg 
+  484  ll pic/
+  485  vi index.php 
+  486  ll
+  487  cd ../
+  488  ll
+  489  rm index.zip 
+  490  history|grep index
+  491  zip -r index.zip src/
+  492  ll
+  493  ls -lh
+  494  ls -la
+  495  ls -lh
+  496  du -sh src/
+  497  history|grep index
+  498  aws lambda create-function     --function-name php-example-index4     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  499  aws lambda invoke     --function-name php-example-index4     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  500  vi src/index.php 
+  501  rm index.zip 
+  502  aws lambda create-function     --function-name php-example-index5     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  503  zip -r index.zip src/
+  504  aws lambda create-function     --function-name php-example-index5     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  505  aws lambda invoke     --function-name php-example-index5     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  506  aws lambda create-function     --function-name php-example-index5     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  507  ll
+  508  aws lambda create-function     --function-name php-example-index5     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  509  ll src/
+  510  history|grep create
+  511  ll
+  512  history|grep zip
+  513  aws lambda create-function     --function-name php-example-index6     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  514  ll
+  515  cd src/
+  516  ll
+  517  mv bin/ lib/
+  518  vi index.php 
+  519  ll
+  520  mv lib/ prog/
+  521  vi index.php 
+  522  ll
+  523  cd ../
+  524  ll
+  525  rm index.zip 
+  526  zip -r index.zip src/
+  527  aws lambda create-function     --function-name php-example-index6     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  528  ll
+  529  cd src/
+  530  ll
+  531  mv prog/ bin/
+  532  vi index.php 
+  533  ll
+  534  cd ../
+  535  ll
+  536  rm index.zip 
+  537  zip -r index.zip src/
+  538  aws lambda create-function     --function-name php-example-index6     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  539  cd ../
+  540  cp -r php-example/ php-example_create_test/
+  541  cd php-example_create_test/
+  542  ll
+  543  rm index.zip 
+  544  ll src/
+  545  rm -rf src/python/
+  546  zip -r index.zip src/
+  547  ll
+  548  aws lambda create-function     --function-name php-example-index6     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  549  cd ../
+  550  cd php-example
+  551  ll
+  552  cd src/
+  553  ll
+  554  cd python/
+  555  ll
+  556  du -sh __pycache__/
+  557  ls -lh
+  558  rm master.zip 
+  559  ll bin/
+  560  cd ../
+  561  du -sh python/
+  562  vi index.php 
+  563  ll
+  564  cd ../
+  565  ll
+  566  rm index.zip 
+  567  zip -r index.zip src/
+  568  ll
+  569  ls -lh
+  570  tar czvf src.tar.gz src/
+  571  ls -lh
+  572  aws lambda create-function     --function-name php-example-index7     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  573  ll
+  574  ll src
+  575  ll src/vendor/
+  576  ll src/vendor/bin/
+  577  cd src
+  578  ll
+  579  du -sh vendor/
+  580  du -sh python/
+  581  cd python/
+  582  ll
+  583  du -sh __pycache__/
+  584  du -sh ImageHash-4.0.dist-info/
+  585  ls -la
+  586  du -sh PIL/
+  587  ll PIL
+  588  du -sh PIL/__pycache__/
+  589  ll
+  590  du -sh scipy/__pycache__/
+  591  du -sh imagehash/__pycache__/
+  592  history|grep free
+  593  ./pip3 freeze
+  594  history|grep uninstall
+  595  ./pip3 uninstall ImageHash==4.0
+  596  ./pip3 uninstall opencv-python==4.0.0.21
+  597  ./pip3 freeze
+  598  cd ../
+  599  du -sh python/
+  600  cd python/
+  601  ll
+  602  ./pip3 freeze
+  603  du -sh PyPuzzle-master/
+  604  rm puzzle-diff 
+  605  cd PyPuzzle-master/
+  606  ll
+  607  git status
+  608  cd ../
+  609  ll
+  610  ./pip3 freeze
+  611  ./pip3 uninstall pypuzzle==1.3
+  612  ./pip3 uninstall numpy==1.16.2
+  613  du -sh ../python/
+  614  ./pip3 freeze
+  615  ./pip3 uninstall PyWavelets==1.0.2
+  616  ./pip3 uninstall Pillow==5.4.1
+  617  du -sh ../python/
+  618  ./pip3 freeze
+  619  ./pip3 uninstall scipy==1.2.1
+  620  ./pip3 uninstall six==1.12.0
+  621  vi test.py 
+  622  history|grep pip3
+  623  du -sh ../python/
+  624  ./pip3 install opencv-python -t .
+  625  ll
+  626  du -sh ../python/
+  627  ll numpy-1.16.2.dist-info/
+  628  ll numpy/
+  629  ll numpy/__pycache__/
+  630  du -sh numpy/__pycache__/
+  631  ll
+  632  du -sh opencv_python-4.0.0.21.dist-info/
+  633  du -sh numpy
+  634  du -sh numpy-1.16.2.dist-info/
+  635  du -sh
+  636  du -sh PyPuzzle-master/
+  637  rm -rf PyPuzzle-master/
+  638  history|grep pip3
+  639  ./pip3 install ImageHash -t .
+  640  du -sh ../python/
+  641  ll
+  642  ./python3.6 -B test.py 
+  643  du -sh ImageHash-4.0.dist-info/
+  644  du -sh PIL/
+  645  du -sh Pillow-5.4.1.dist-info/
+  646  du -sh bin/
+  647  du -sh cv2/
+  648  du -sh cv numpy/
+  649  du -sh cv numpy-1.16.2.dist-info/
+  650  du -sh numpy-1.16.2.dist-info/
+  651  du -sh numpy/
+  652  ll
+  653  du -sh imagehash/
+  654  du -sh opencv_python-4.0.0.21.dist-info/
+  655  du -sh pywt/
+  656  du -sh scipy
+  657  du -sh scipy-1.2.1.dist-info/
+  658  du -sh six-1.12.0.dist-info/
+  659  du -sh imagehash/
+  660  du -sh ImageHash-4.0.dist-info/
+  661  du -sh numpy/
+  662  du -sh numpy-1.16.2.dist-info/
+  663  ll
+  664  du -sh PyWavelets-1.0.2.dist-info/
+  665  du -sh Pillow-5.4.1.dist-info/
+  666  du -sh PIL/
+  667  du -sh ImageHash-4.0.dist-info/
+  668  du -sh imagehash/
+  669  cd numpy
+  670  ll
+  671  du -sh __pycache__/
+  672  ls -ha
+  673  ls -lh
+  674  du -sh doc/
+  675  ll
+  676  cd ../
+  677  ll
+  678  du -sh bin/
+  679  su -sh cv2/
+  680  du -sh cv2/
+  681  du -sh cv2/__pycache__/
+  682  ll cv2/
+  683  ls -lh cv2/
+  684  ls -lh cv2/data/
+  685  ls -lh cv2/data/__pycache__/
+  686  du -sh ../python/
+  687  ll
+  688  du -m ../python/ | sort -nr | head -10
+  689  history|grep freeze
+  690  ./pip3 freeze
+  691  ./pip3 uninstall scipy==1.2.1
+  692  ./python3.6 test.py 
+  693  du -sh ../python/
+  694  cd ../
+  695  ll
+  696  rm index.zip 
+  697  zip -r index.zip src/
+  698  ll
+  699  ls -lh
+  700  aws lambda create-function     --function-name php-example-index7     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  701  cd src/python/
+  702  ll
+  703  du -m ../python/ | sort -nr | head -20
+  704  ./pip freeze
+  705  ./pip3 freeze
+  706  ./pip3 uninstall numpy==1.16.2
+  707  ./python3.6 test.py 
+  708  vi test.py 
+  709  ./python3.6 test.py 
+  710  vi test.py 
+  711  ./python3.6 test.py 
+  712  ./pip3 install numpy
+  713  ./python3.6 test.py 
+  714  du -m ../python/ | sort -nr | head -20
+  715  du -sh ../python/
+  716  cd ../
+  717  ls -lh
+  718  rm index.zip 
+  719  zip -r index.zip src/
+  720  ls -lh
+  721  aws lambda create-function     --function-name php-example-index7     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  722  aws lambda invoke     --function-name php-example-index7     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  723  cat hello-output.txt 
+  724  vi src/index.php 
+  725  rm index.zip 
+  726  zip -r index.zip src/
+  727  aws lambda create-function     --function-name php-example-index8     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  728  aws lambda invoke     --function-name php-example-index8     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  729  cat hello-output.txt 
+  730  cd src
+  731  ll
+  732  vi index.php 
+  733  ll bin/
+  734  vi index.php 
+  735  cd ../
+  736  rm index.zip 
+  737  zip -r index.zip src/
+  738  aws lambda create-function     --function-name php-example-index9     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  739  aws lambda invoke     --function-name php-example-index9     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  740  cat hello-output.txt 
+  741  vi index.zip 
+  742  cd src
+  743  ll
+  744  vi index.php 
+  745  ll python/
+  746  cd ../
+  747  rm index.zip 
+  748  zip -r index.zip src/
+  749  aws lambda create-function     --function-name php-example-index10     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3
+  750  aws lambda create-function     --function-name php-example-index10     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  751  aws lambda invoke     --function-name php-example-index10     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  752  echo $PYTHONHOME
+  753  echo $PYTHONPATH
+  754  vi src/index.php 
+  755  cd src
+  756  ./python/python3.6 test.py
+  757  cd ../
+  758  rm index.zip 
+  759  zip -r index.zip src/
+  760  aws lambda create-function     --function-name php-example-index11     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  761  aws lambda invoke     --function-name php-example-index11     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  762  ll
+  763  cd php-example
+  764  cd src
+  765  ll
+  766  vi python/test.py 
+  767  cd python/
+  768  ./python3.6 test.py 
+  769  vi python/test.py 
+  770  ll
+  771  vi test.py 
+  772  ./python3.6 test.py 
+  773  ./pip3 freeze
+  774  history|grep du
+  775  du -m ../python/ | sort -nr | head -20
+  776  vi test.py 
+  777  ./python3.6 test.py 
+  778  vi test.py 
+  779  ./python3.6 test.py 
+  780  ./pip3 freeze
+  781  ./pip3 uninstall numpy==1.16.2
+  782  ./pip3 install numpy -t .
+  783  ll
+  784  du -m ../python/ | sort -nr | head -20
+  785  du -sh ../python/
+  786  ls -lh numpy
+  787  ls -lh numpy/__pycache__/
+  788  ll
+  789  ls -lh
+  790  cd ../
+  791  ll
+  792  vi bootstrap 
+  793  ll vendor/
+  794  cd src
+  795  ll
+  796  vi index.php 
+  797  cd ../
+  798  ll
+  799  rim index.zip 
+  800  rm index.zip 
+  801  zip -r index.zip src/
+  802  aws lambda create-function     --function-name php-example-hello13     --handler hello     --zip-file fileb://./hello.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:2"
+  803  aws lambda invoke     --function-name php-example-index13     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  804  aws lambda create-function     --function-name php-example-index12     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  805  cd src/python/
+  806  ./pip3 freeze
+  807  ./pip3 uninstall numpy==1.16.2
+  808  cd ../
+  809  rm index.zip 
+  810  zip -r index.zip src/
+  811  ls -lh
+  812  aws lambda create-function     --function-name php-example-index12     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  813  aws lambda invoke     --function-name php-example-index12     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  814  vi src/index.php 
+  815  rm index.zip 
+  816  zip -r index.zip src/
+  817  aws lambda create-function     --function-name php-example-index13     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  818  aws lambda invoke     --function-name php-example-index13     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  819  vi src/index.php 
+  820  rm index.zip 
+  821  zip -r index.zip src/
+  822  aws lambda create-function     --function-name php-example-hello14     --handler hello     --zip-file fileb://./hello.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:2"
+  823  aws lambda create-function     --function-name php-example-index14     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  824  aws lambda invoke     --function-name php-example-index14     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  825  ll
+  826  cd src
+  827  ll
+  828  du -sh vendor/
+  829  rm -rf vendor/
+  830  cd ../
+  831  ls -lh
+  832  rm index.zip 
+  833  zip -r index.zip src/
+  834  ls -lh
+  835  cd src/python/
+  836  ./pip3 freeze
+  837  ./pip3 install numpy -t .
+  838  ll
+  839  ./pip3 freeze
+  840  ./python3.6 -B test.py 
+  841  cd ../
+  842  vi index.php 
+  843  rm index.php 
+  844  zip -r index.zip src/
+  845  ll
+  846  cd ../
+  847  zip -r index.zip src/
+  848  ls -lh
+  849  du -sh src/python/
+  850  aws lambda create-function     --function-name php-example-index15     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --memory-size 512
+  851      --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  852  aws lambda create-function     --function-name php-example-index15     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --memory-size 512     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  853* aws lambda create-function     --function-name php-example-index15     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --memory-size 512     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  854  ls -lh
+  855  cd src
+  856  ll
+  857  ls -lh
+  858  rm composer.phar 
+  859  cd ../
+  860  ll
+  861  cd src
+  862  ll
+  863  history|grep du
+  864  du -m ../src | sort -nr | head -20
+  865  ll bin/
+  866  ll
+  867  cd ../
+  868  ll
+  869  history
+  870  history|grep php
+  871  cd src
+  872  cp ../../php-example_create_test/src/index.php .
+  873  ll
+  874  vi index.php 
+  875  history|grep du
+  876  du -m ../src | sort -nr | head -20
+  877  cd python/
+  878  du -m ../python | sort -nr | head -20
+  879  ls -lh pywt/tests/
+  880  vi pywt/tests/test__pywt.py 
+  881  cd ../
+  882  ll
+  883  cd ../
+  884  ll
+  885  cp -r php-example/ php-example_create_test2/
+  886  cd php-example
+  887  cd src/python/
+  888  du -m ../python | sort -nr | head -20
+  889  rm -rf numpy/lib/tests/
+  890  rm -rf numpy/core/tests/
+  891  rm -rf pywt/tests/
+  892  du -m ../python | sort -nr | head -20
+  893  du -sh ../python/
+  894  cd ../../
+  895  ll
+  896  rm index.zip 
+  897  zip -r index.zip src/
+  898  ls -h
+  899  ls -lh
+  900  cd src/python/
+  901  ./python3.6 -B test.py 
+  902  du -m ../python | sort -nr | head -20
+  903  mv cv2/data/ cv2/data2/
+  904  du -m ../python | sort -nr | head -20
+  905  ./python3.6 -B test.py 
+  906  mv cv2/data2/ cv2/data/
+  907  ./python3.6 -B test.py 
+  908  cd ../
+  909  vi index.php 
+  910  rm bin/cwebp 
+  911  cd ../
+  912  rm index.zip 
+  913  zip -r index.zip src/
+  914  ls -lh
+  915  cd src
+  916  ll
+  917  ll bin/
+  918  ls -lh pic/
+  919  ls -lh bin/
+  920  du -m ../src | sort -nr | head -20
+  921  vi python/test.py 
+  922  cd python/
+  923  ./python3.6 -B test.py 
+  924  vi test.py 
+  925  ./python3.6 -B test.py 
+  926  ./pip3 freeze
+  927  ./pip3 uninstall opencv-python==4.0.0.21
+  928  du -sh ../python/
+  929  cd ../
+  930  rm index.zip 
+  931  zip -r index.zip src/
+  932  ls -lh
+  933  aws lambda create-function     --function-name php-example-index15     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --memory-size 512     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  934  aws lambda invoke     --function-name php-example-index15     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  935  cd src
+  936  ll
+  937* ll python/python3.6 
+  938  ll
+  939  cd ../
+  940  vi index.zip 
+  941  vi src/index.php 
+  942  rm index.zip 
+  943  zip -r index.zip src/
+  944  ls -lh
+  945  aws lambda create-function     --function-name php-example-index16     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --memory-size 512     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  946  aws lambda invoke     --function-name php-example-index16     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  947  vi src/index.php
+  948  rm index.zip 
+  949  zip -r index.zip src/
+  950  aws lambda create-function     --function-name php-example-index17     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --memory-size 512     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  951  aws lambda invoke     --function-name php-example-index17     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  952  vi src/index.php 
+  953  rm index.zip 
+  954  zip -r index.zip src/
+  955  ll
+  956  aws lambda create-function     --function-name php-example-index18     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --memory-size 512     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  957  aws lambda invoke     --function-name php-example-index18     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  958  cd ../
+  959  ll
+  960  du -sh python-3-bin/
+  961  cd python-3-bin/
+  962  ll
+  963  ll bin/
+  964  ./pyvenv
+  965  ll
+  966  ./bin/pyvenv
+  967  cd bin/
+  968  ./python3.6 -m venv
+  969  ./pyvenv -h
+  970  ./pyvenv --system-site-packages
+  971  cd ../
+  972  ll
+  973  cd php-example
+  974  ll
+  975  vi src/index.php
+  976  rm index.zip 
+  977  zip -r index.zip src/
+  978  aws lambda create-function     --function-name php-example-index19     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --memory-size 512     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  979  aws lambda invoke     --function-name php-example-index19     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  980  vi src/index.php 
+  981  rm index.zip 
+  982  zip -r index.zip src/
+  983  aws lambda create-function     --function-name php-example-index20     --handler index     --zip-file fileb://./index.zip     --runtime provided     --role "arn:aws:iam::816340862232:role/service-role/LambdaPhpExample"     --region us-east-1     --memory-size 512     --layers "arn:aws:lambda:us-east-1:816340862232:layer:php-example-runtime:8"           "arn:aws:lambda:us-east-1:816340862232:layer:php-example-vendor:3"
+  984  aws lambda invoke     --function-name php-example-index20     --region us-east-1     --log-type Tail     --query 'LogResult'     --output text     --payload '{"name": "World"}' hello-output.txt | base64 --decode
+  985  ll
+  986  cat hello-output.txt 
+  987  history >> history.txt 
